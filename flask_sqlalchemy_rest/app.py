@@ -8,6 +8,9 @@ import json
 from result_model import SearchResult, dbResult
 from newsapi import NewsApiClient
 from textSentiment import TextAnalysis
+from twitterAnalysis import printResearch
+import os
+from google.cloud.bigquery.client import Client
 
 #Init app
 app = Flask(__name__)
@@ -79,6 +82,14 @@ def text_analytic():
         a.append(record)
     return json.dumps(a)
 
+
+@app.route('/twitterAnalysis/<keyword>', methods=['GET'])
+def twitter(keyword):
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = (r"C:\Users\MAIH004\My Project-4f1de5feb39a.json")
+    bq_client = Client()
+    search_result = SearchResult.query.all()
+    printResearch(search_result[38].content)
+    return 'abc'
 
 if __name__ == '__main__':
     app.run()
