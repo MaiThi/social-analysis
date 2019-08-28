@@ -19,10 +19,10 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     this.item = null;
-    this.productService.deleteAllResults().subscribe(
+    /*this.productService.deleteAllResults().subscribe(
       res => {},
       error1 => {}
-    );
+    );*/
   }
   test() {
     alert('abc');
