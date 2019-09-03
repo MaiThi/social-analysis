@@ -9,6 +9,7 @@ from result_model import SearchResult, dbResult
 from newsapi import NewsApiClient
 from textSentiment import TextAnalysis
 from twitterAnalysis import printResearch
+#from UpdateTwitter import printResearch
 import os
 from google.cloud.bigquery.client import Client
 
@@ -85,10 +86,10 @@ def text_analytic():
 
 @app.route('/twitterAnalysis/<keyword>', methods=['GET'])
 def twitter(keyword):
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = (r"C:\Users\MAIH004\My Project-4f1de5feb39a.json")
-    bq_client = Client()
-    search_result = SearchResult.query.all()
-    printResearch(search_result[38].content)
+    #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = (r"C:\Users\MAIH004\My Project-4f1de5feb39a.json")
+   # bq_client = Client()
+  # search_result = SearchResult.query.all()
+    printResearch("Donal Trump")
     return 'abc'
 
 if __name__ == '__main__':
