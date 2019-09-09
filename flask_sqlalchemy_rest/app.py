@@ -89,7 +89,7 @@ def twitter(keyword):
     #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = (r"C:\Users\MAIH004\My Project-4f1de5feb39a.json")
    # bq_client = Client()
   # search_result = SearchResult.query.all()
-    printResearch("Donal Trump")
+    printResearch("Donald Trump")
     return 'abc'
 
 if __name__ == '__main__':

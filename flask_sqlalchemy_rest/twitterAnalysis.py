@@ -77,14 +77,31 @@ def analyze_tweets(keyword, total_tweets):
 
 def printResearch(keyword):
     tso = TwitterSearchOrder()  # create a TwitterSearchOrder object
-    tso.set_keywords([ 'Bertelsmann'])  # let's define all words we would like to have a look for
-    tso.set_language('de')  # we want to see German tweets only
+    tso.set_keywords(['Donald Trump', 'since:2019-09-01','until:2019-09-09'])  # let's define all words we would like to have a look for
+    tso.set_language('en')  # we want to see German tweets only
+    tso.set_positive_attitude_filter()
+    tso.set_include_entities(False)# and don't give us all those entity information
+    ts = TwitterSearch(CONS_KEY, CONS_SECRET, ACC_TOKEN, ACC_SECRET)
+    sum = 0
+    for tweet in ts.search_tweets_iterable(tso):
+        if ('RT @' not in tweet['text']):
+            sum += 1
+            print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
+    print(sum)
+
+    tso = TwitterSearchOrder()  # create a TwitterSearchOrder object
+    tso.set_keywords(['Donald Trump', 'since:2019-09-01',
+                      'until:2019-09-09'])  # let's define all words we would like to have a look for
+    tso.set_language('en')  # we want to see German tweets only
+    tso.set_negative_attitude_filter()
     tso.set_include_entities(False)  # and don't give us all those entity information
     ts = TwitterSearch(CONS_KEY, CONS_SECRET, ACC_TOKEN, ACC_SECRET)
+    sum = 0
     for tweet in ts.search_tweets_iterable(tso):
-        print('abc')
-        print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
-
+        if ('RT @' not in tweet['text']):
+            sum += 1
+            print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
+    print(sum)
     final_score = 23
     #final_score = analyze_tweets(keyword, 10)
     #final_score = get_sentiment_score(keyword)
