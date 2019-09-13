@@ -1,40 +1,23 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef , SimpleChanges, Directive, Input, OnChanges} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Result} from '../../Model/result';
 import {ProductServiceService} from '../../Service/ProductService.service';
-
+import {TwitterResult} from '../../Model/twitterresult';
+import * as Highcharts from 'highcharts';
+import {NotificationService} from '../../Service/notification.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  // tslint:disable-next-line:ban-types
   step = 0;
-  constructor(private productService: ProductServiceService) { }
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['id', 'source', 'title' , 'score' ];
-  result: Result[] = [];
-  listResult: MatTableDataSource<any>;
+  constructor(private productService: ProductServiceService, private notificationService: NotificationService) { }
   ngOnInit() {
-    this.productService.getDashboardResult().subscribe(
-      res => {
-        this.result = res;
-        this.filterValueIntoMatSource(this.result);
-      },
-      error1 => {
-        alert('error');
-      }
-    );
+    this.notificationService.success(':: Search Engine successfully');
   }
 
-  filterValueIntoMatSource(results: Result[]) {
-    this.listResult = new MatTableDataSource(results);
-    this.listResult.sort = this.sort;
-    this.listResult.paginator = this.paginator;
-    this.listResult.filterPredicate =
-      (data: Result, filter: string) => (data.id !== null) ? (data.score !== Number.parseFloat(filter)) : false;
-  }
   setStep(index: number) {
     this.step = index;
   }

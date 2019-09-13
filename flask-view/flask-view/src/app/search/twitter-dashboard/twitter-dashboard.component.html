@@ -1,0 +1,45 @@
+  <div  fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5%" fxLayoutAlign="center">
+    <div fxFlex="10%">Total: </div>
+    <div fxFlex="30%">
+        <div *ngIf="twitterResult.length !== 0"><b style="font-size: 18px">
+       (-) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{averageTwitter*100 | number:'2.2'}}%
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(+)</b>
+          <mat-progress-bar
+                style = "height: 20px; width: 180px"
+                [mode]="mode"
+                [value]="averageTwitter*100">
+            </mat-progress-bar>
+        </div>
+     </div>
+    <div fxFlex="60%">
+        <chart style="align-self: center" [options]="optionsTwitter"></chart>
+    </div>
+  </div>
+
+    <mat-table [dataSource]="listTweetResult" style=" width: 100% ">
+            <ng-container matColumnDef="id">
+                          <mat-header-cell *matHeaderCellDef ><b>No</b></mat-header-cell>
+                          <mat-cell *matCellDef="let element1">{{ element1.id }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="tweet">
+                          <mat-header-cell *matHeaderCellDef><b>Tweet</b></mat-header-cell>
+                          <mat-cell *matCellDef="let element1" matTooltip="{{element1.tweet}}">{{ element1.tweet }} </mat-cell>
+              </ng-container>
+            <ng-container matColumnDef="score">
+                          <mat-header-cell *matHeaderCellDef><b>Score</b></mat-header-cell>
+                          <mat-cell *matCellDef="let element1" matTooltip="{{element1.score}}">
+                            <mat-progress-bar
+                                style = "height: 5px;  width: 50%"
+                                color="primary"
+                                [mode]="mode"
+                                 matTooltip="{{element1.score*100}}%"
+                                [value]="element1.score *100">
+                            </mat-progress-bar>
+                          </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedTwitterColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedTwitterColumns;"></mat-row>
+
+    </mat-table>
+        <mat-paginator #paginatorTwitter [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>

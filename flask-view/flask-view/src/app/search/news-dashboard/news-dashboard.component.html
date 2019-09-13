@@ -1,0 +1,59 @@
+  <div  fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5%" fxLayoutAlign="center">
+    <div fxFlex="10%">Total: </div>
+    <div fxFlex="30%">
+        <div *ngIf="result.length !== 0"><b style="font-size: 18px">
+          (-) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{average*100}}%
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(+)</b>
+        <mat-progress-bar
+              style = "height: 20px; width: 180px"
+              [mode]="mode"
+              [value]="average*100">
+        </mat-progress-bar>
+        </div>
+     </div>
+    <div fxFlex="60%">
+        <chart style="align-self: center" [options]="options"></chart>
+    </div>
+  </div>
+
+        <mat-table [dataSource]="listResult" style=" width: 100% " matSort>
+
+            <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef  mat-sort-header><b>No</b></mat-header-cell>
+                        <mat-cell *matCellDef="let element">{{ element.id }} </mat-cell>
+            </ng-container>
+
+          <ng-container matColumnDef="source">
+                        <mat-header-cell *matHeaderCellDef  mat-sort-header><b>Source</b></mat-header-cell>
+                        <mat-cell *matCellDef="let element">{{ element.source }} </mat-cell>
+            </ng-container>
+
+           <ng-container matColumnDef="title">
+                        <mat-header-cell *matHeaderCellDef  mat-sort-header><b>Title</b></mat-header-cell>
+                        <mat-cell *matCellDef="let element" (click)="redirectPage(element)" matTooltip="{{element.description}}">{{ element.title }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="score">
+                    <mat-header-cell *matHeaderCellDef  mat-sort-header ><b style="margin-left: 20px;">Score</b></mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                       <mat-progress-bar
+                                style = "height: 5px;  width: 50%"
+                                color="primary"
+                                [mode]="mode"
+                                 matTooltip="{{element.score*100}}%"
+                                [value]="element.score *100">
+                            </mat-progress-bar>
+                    </mat-cell>
+            </ng-container>
+
+           <ng-container matColumnDef="noData">
+                  <mat-footer-cell *matFooterCellDef colspan="6">
+                    No data.
+                  </mat-footer-cell>
+           </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            <mat-footer-row *matFooterRowDef="['noData']" [ngClass]="{'hide':!(listResult != null && listResult.data.length==0)}"></mat-footer-row>
+
+        </mat-table>
+            <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>

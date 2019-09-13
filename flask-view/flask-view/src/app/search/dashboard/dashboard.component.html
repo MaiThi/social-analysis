@@ -1,138 +1,43 @@
 
+<div class="container">
 <div class="signin-content">
   </div>
 <div style="padding-top: 70px;">
+
   <mat-card>
-   <p class="h2 text-center">Evaluation report</p>
+   <p class="h1 text-center">Sentiment report</p>
   <br>
 <mat-accordion class="example-headers-align">
   <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
-    <mat-expansion-panel-header>
+    <mat-expansion-panel-header style="height: 65px">
       <mat-panel-title>
        <b> News </b>
        </mat-panel-title>
       <mat-panel-description>
-        Overal <div *ngIf="result.length !== 0"><b>Σ    {{result[0]['score']}}</b>
-        <ng-template [ngIf]="(result[0]['score']*100) < 40.0">
-             <div class="progress" style="height: 20px; margin-bottom: 0px;">
-                <div class="progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="40"
-                aria-valuemin="0" aria-valuemax="100" style="width: 50%">
-                </div>
-              </div>
-          </ng-template>
-        <ng-template [ngIf]="(result[0]['score']*100) > 40.0 && (result[0]['score']*100) < 70.0">
-             <div class="progress" style="height: 20px; margin-bottom: 0px;">
-                <div class="progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="40"
-                aria-valuemin="0" aria-valuemax="100" style="width: 50%">
-                </div>
-              </div>
-          </ng-template>
-          <ng-template [ngIf]="(result[0]['score']*100) >= 70.0">
-             <div class="progress" style="height: 20px; margin-bottom: 0px;">
-                <div class="progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40"
-                aria-valuemin="0" aria-valuemax="100" style="width: 70%">
-                </div>
-              </div>
-          </ng-template>
-      </div>
         <mat-icon>picture_in_picture</mat-icon>
       </mat-panel-description>
     </mat-expansion-panel-header>
-
-
-        <mat-table [dataSource]="listResult" style=" width: 100% " matSort>
-
-            <ng-container matColumnDef="id">
-                        <mat-header-cell *matHeaderCellDef  mat-sort-header><b>No</b></mat-header-cell>
-                        <mat-cell *matCellDef="let element">{{ element.id }} </mat-cell>
-            </ng-container>
-
-          <ng-container matColumnDef="source">
-                        <mat-header-cell *matHeaderCellDef  mat-sort-header><b>Source</b></mat-header-cell>
-                        <mat-cell *matCellDef="let element">{{ element.source }} </mat-cell>
-            </ng-container>
-
-           <ng-container matColumnDef="title">
-                        <mat-header-cell *matHeaderCellDef  mat-sort-header><b>Title</b></mat-header-cell>
-                        <mat-cell *matCellDef="let element">{{ element.title }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="score">
-                    <mat-header-cell *matHeaderCellDef  mat-sort-header ><b style="margin-left: 20px;">Score</b></mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-
-                     <ng-container *ngIf="(element.score*100) < 40.0">
-                         <div class="progress" style="height: 20px;margin-bottom: 0px;width: 100px;margin-left: 20px;">
-                            <div class="progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="40"
-                            aria-valuemin="0" aria-valuemax="100" style="width: 30%" matTooltip="{{element.score}}">
-                            </div>
-                          </div>
-                      </ng-container>
-                    <ng-container *ngIf="(element.score*100) > 40.0 && (element.score*100) < 70.0">
-                         <div class="progress" style="height: 20px; margin-bottom: 0px;width: 100px;margin-left: 20px;">
-                            <div class="progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="40"
-                            aria-valuemin="0" aria-valuemax="100" style="width: 50%" matTooltip="{{element.score}}">
-                            </div>
-                          </div>
-                      </ng-container>
-                      <ng-container *ngIf="(element.score*100) >= 70.0">
-                         <div class="progress" style="height: 20px;margin-bottom: 0px;width: 100px;margin-left: 20px;">
-                            <div class="progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40"
-                            aria-valuemin="0" aria-valuemax="100" style="width: 70%" matTooltip="{{element.score}}">
-                            </div>
-                          </div>
-                      </ng-container>
-                    </mat-cell>
-            </ng-container>
-
-           <ng-container matColumnDef="noData">
-                  <mat-footer-cell *matFooterCellDef colspan="6">
-                    No data.
-                  </mat-footer-cell>
-           </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-            <mat-footer-row *matFooterRowDef="['noData']" [ngClass]="{'hide':!(listResult != null && listResult.data.length==0)}"></mat-footer-row>
-        </mat-table>
-            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
+      <app-news-dashboard></app-news-dashboard>
     <mat-action-row>
       <button mat-button color="primary" (click)="nextStep()">Next</button>
     </mat-action-row>
   </mat-expansion-panel>
 
-  <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
-    <mat-expansion-panel-header>
+  <mat-expansion-panel style="margin-top: 10px" [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+    <mat-expansion-panel-header style="height: 65px">
       <mat-panel-title>
        <b> Twitter </b>
       </mat-panel-title>
       <mat-panel-description>
-         The result from Twitters
-        <mat-icon>local_florist</mat-icon>
+
+        <mat-icon style="align-self: right;">local_florist</mat-icon>
       </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p>Here we will show the result from Twitter</p>
+      <app-twitter-dashboard></app-twitter-dashboard>
     <mat-action-row>
       <button mat-button color="warn" (click)="prevStep()">Previous</button>
       <button mat-button color="primary" (click)="nextStep()">Next</button>
-    </mat-action-row>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-       <b> Youtube </b>
-      </mat-panel-title>
-      <mat-panel-description>
-         The result from Youtube
-        <mat-icon>ondemand_video</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <p>Here we will show the result from Youtube</p>
-    <mat-action-row>
-      <button mat-button color="warn" (click)="prevStep()">Previous</button>
-      <button mat-button color="primary" (click)="nextStep()">End</button>
     </mat-action-row>
   </mat-expansion-panel>
 
@@ -142,3 +47,4 @@
 <a href="https://www.arvato.com/de.html" target="_blank">
       <img class="img"  src="./assets/images/arvato_weiss_1000px.png">
     </a>
+</div>
