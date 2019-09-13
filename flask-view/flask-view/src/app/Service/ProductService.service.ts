@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Product} from '../Model/Product';
-import {Search} from '../Model/search';
 import {Item} from '../Model/item';
-import {Result} from '../Model/result';
+import {ResponseDashboardNew} from '../Model/response';
+import {ResponseDashboardTwitter} from '../Model/responseTwitter';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class ProductServiceService {
   private PRODUCT_URL = this.BASE_URL + 'products';
   private SAVE_UPDATE_LOCATION_URL = this.PRODUCT_URL;
   private SEARCH_URL = this.BASE_URL + 'search';
-
+  private TWITTER_SEARCH_URL = this.BASE_URL + 'twitterAnalysis';
   constructor(private http: HttpClient) { }
 
   getProducts(): Observable<Product[]> {
@@ -29,10 +29,15 @@ export class ProductServiceService {
   getSearchsResult(keyword: string): Observable<Item> {
     return this.http.get<Item>(this.SEARCH_URL + '/' + keyword);
   }
-  getDashboardResult(): Observable<Result[]> {
-    return this.http.get<Result[]>(this.BASE_URL + 'analysic');
+  getDashboardResult(): Observable<ResponseDashboardNew> {
+    return this.http.get<ResponseDashboardNew>(this.BASE_URL + 'analysic', { headers: new HttpHeaders({ timeout: `${200000}` }) });
   }
-
+  getSearchTwittersResult(keyword: string): Observable<string> {
+    return this.http.get<string>(this.TWITTER_SEARCH_URL + '/' + keyword);
+  }
+  getTwitterResult(): Observable<ResponseDashboardTwitter> {
+    return this.http.get<ResponseDashboardTwitter>(this.BASE_URL + 'get-twitters');
+  }
   deleteAllResults(): Observable<any> {
     return this.http.get<any>(this.BASE_URL + 'searched/deleteAll');
   }
