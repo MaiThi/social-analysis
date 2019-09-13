@@ -1,8 +1,16 @@
 from monkeylearn import MonkeyLearn
 import json
 from result_model import SearchResult, dbResult
-
+from google.cloud import language
+from google.cloud.language import enums
+from google.cloud.language import types
 from sqlalchemy.ext.declarative import DeclarativeMeta
+
+ACC_TOKEN = '1161562831785013248-uP38DYYIAmn7udOGErFhD8l566xTMj'
+ACC_SECRET = 'Ehe1BluMAU2K1orNCjtFe5s4zpVwNzRPwG8AfaMyqPMDU'
+CONS_KEY = 'Ep716dcsf5H4ZxAZQ3RVtjXCP'
+CONS_SECRET = '1RmWPBInTVhgQMsCkx5VTz5hlvaO3flRgvge07RKaAQ0hxgIQV'
+
 
 class AlchemyEncoder(json.JSONEncoder):
 
@@ -47,5 +55,28 @@ def TextAnalysis(resultSearch):
     return list
 
 
+def rescaleNumber(oldValue):
+    newValue = ((oldValue + 1) * (1 - 0))/2
+    return newValue
+
+
+def GetSentimentScore():
+    print("we are calculate sentiment score")
+    search_result = SearchResult.query.all()
+    for search in search_result:
+        client = language.LanguageServiceClient()
+        document = types\
+                   .Document(content=search.content,
+                             type=enums.Document.Type.PLAIN_TEXT)
+        sentiment_score = client\
+                          .analyze_sentiment(document=document)\
+                          .document_sentiment\
+                          .score
+        numberScale = rescaleNumber(sentiment_score)
+        search.score = round(float(numberScale),3)
+        dbResult.session.commit()
+    return "done"
+
+
 if __name__ == "__main__":
-    print(TextAnalysis())
+    print(GetSentimentScore())

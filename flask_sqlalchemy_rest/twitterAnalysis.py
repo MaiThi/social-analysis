@@ -1,6 +1,6 @@
 import tweepy
 import re
-
+from twitter_result_model import TwitterSearchModel, dbTwitterResult
 from google.cloud import language
 from google.cloud.language import enums
 from google.cloud.language import types
@@ -31,7 +31,7 @@ def search_tweets(keyword, total_tweets):
     api = authentication(CONS_KEY,CONS_SECRET,ACC_TOKEN,ACC_SECRET)
     search_result = tweepy.Cursor(api.search,
                                   q=keyword,
-                                  result_type='mixed',
+                                  tweet_mode='extended',
                                   lang='en').items(total_tweets)
     return search_result
 
@@ -50,69 +50,61 @@ def clean_tweets(tweet):
 
 def get_sentiment_score(tweet):
     print("we are calculate sentiment score")
-   # client = language.LanguageServiceClient()
-   # document = types\
-        #       .Document(content=tweet,
-                   #      type=enums.Document.Type.PLAIN_TEXT)
-  #  sentiment_score = client\
-                  #    .analyze_sentiment(document=document)\
-                 #     .document_sentiment\
-                  #    .score
-    return 30
+    client = language.LanguageServiceClient()
+    document = types\
+               .Document(content=tweet,
+                         type=enums.Document.Type.PLAIN_TEXT)
+    sentiment_score = client\
+                      .analyze_sentiment(document=document)\
+                      .document_sentiment\
+                      .score
+    return sentiment_score
 
 
 def analyze_tweets(keyword, total_tweets):
+    dbTwitterResult.create_all()
     score = 0
     tweets = search_tweets(keyword,total_tweets)
     for tweet in tweets:
         cleaned_tweet = clean_tweets(tweet.text.encode('utf-8'))
         sentiment_score = get_sentiment_score(cleaned_tweet)
         score += sentiment_score
-        print(tweet)
+        print('Raw Tweet: {}'.format(tweet))
         print('Tweet: {}'.format(cleaned_tweet))
         print('Score: {}\n'.format(sentiment_score))
+        twitter = TwitterSearch(cleaned_tweet, round(float(sentiment_score),2))
+        dbTwitterResult.session.add(twitter)
+        dbTwitterResult.session.commit()
     final_score = round((score / float(total_tweets)),2)
     return final_score
 
 
-def printResearch(keyword):
-    tso = TwitterSearchOrder()  # create a TwitterSearchOrder object
-    tso.set_keywords(['Donald Trump', 'since:2019-09-01','until:2019-09-09'])  # let's define all words we would like to have a look for
-    tso.set_language('en')  # we want to see German tweets only
-    tso.set_positive_attitude_filter()
-    tso.set_include_entities(False)# and don't give us all those entity information
-    ts = TwitterSearch(CONS_KEY, CONS_SECRET, ACC_TOKEN, ACC_SECRET)
-    sum = 0
-    for tweet in ts.search_tweets_iterable(tso):
-        if ('RT @' not in tweet['text']):
-            sum += 1
-            print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
-    print(sum)
+def rescaleNumber(oldValue):
+    newValue = ((oldValue + 1) * (1 - 0))/2
+    return newValue
 
-    tso = TwitterSearchOrder()  # create a TwitterSearchOrder object
-    tso.set_keywords(['Donald Trump', 'since:2019-09-01',
-                      'until:2019-09-09'])  # let's define all words we would like to have a look for
-    tso.set_language('en')  # we want to see German tweets only
-    tso.set_negative_attitude_filter()
-    tso.set_include_entities(False)  # and don't give us all those entity information
-    ts = TwitterSearch(CONS_KEY, CONS_SECRET, ACC_TOKEN, ACC_SECRET)
-    sum = 0
-    for tweet in ts.search_tweets_iterable(tso):
-        if ('RT @' not in tweet['text']):
-            sum += 1
-            print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
-    print(sum)
-    final_score = 23
-    #final_score = analyze_tweets(keyword, 10)
+
+def printResearch(keyword):
+    dbTwitterResult.create_all()
+    keyword = keyword + '-filter:retweets';
+    for tweet in search_tweets(keyword, 20):
+        sentiment_score = get_sentiment_score(tweet.full_text)
+        numberScale = rescaleNumber(sentiment_score)
+        twitterModel = TwitterSearchModel(tweet.full_text, round(float(numberScale),3))
+        dbTwitterResult.session.add(twitterModel)
+        dbTwitterResult.session.commit()
+    print('-----------')
+    #final_score = 23
+    #final_score = analyze_tweets(keyword, 5)
     #final_score = get_sentiment_score(keyword)
-    if final_score <= -0.25:
-        status = 'NEGATIVE | ❌'
-    elif final_score <= 0.25:
-        status = 'NEUTRAL | 🔶'
-    else:
-        status = 'POSITIVE | ✅'
-    text = 'Average score for ' + keyword+ ' is ' + str(final_score) + ' | ' + status
-    print(keyword + ': ' + text)
+    #if final_score <= -0.25:
+    #    status = 'NEGATIVE | ❌'
+    #elif final_score <= 0.25:
+    #   status = 'NEUTRAL | 🔶'
+    #else:
+    #    status = 'POSITIVE | ✅'
+    #text = 'Average score for ' + keyword+ ' is ' + str(final_score) + ' | ' + status
+    print("Done for twitter")
 
 
 if __name__ == '__main__':
