@@ -3,4 +3,7 @@ export class Result {
   title: string;
   score: number;
   source: string;
+  content: string;
+  description: string;
+  url: string;
 }
